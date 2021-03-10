@@ -40,9 +40,14 @@ setup(
     # Customize MANIFEST.in if the general case does not suit your needs
     # Comment out this line to prevent the files from being packaged with your software
     include_package_data=True,
+    install_requires=[
+        "bibtexparser"],
+    
+
 
     # Allows `setup.py test` to work correctly with pytest
     setup_requires=[] + pytest_runner,
+    scripts=['scripts/bib2coa'],
 
     # Additional entries you may want simply uncomment the lines you want and fill in the data
     # url='http://www.my_package.com',  # Website

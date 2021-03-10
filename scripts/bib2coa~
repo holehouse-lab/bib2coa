@@ -1,0 +1,38 @@
+#!/usr/bin/env python
+"""
+Wrapper script that converts MobiDB-LITE generated .csv files into plane old
+FASTA files.
+
+"""
+
+import os
+import argpars
+
+from bibtexparser.bparser import BibTexParser
+
+if __name__=="__main__":
+
+    # set things up...
+    parser = argparse.ArgumentParser(description='Converts the output of MobiDBLITE files to standard bona-fide FASTA files')    
+
+    parser.add_argument("-i", help="Input FASTA file")
+    parser.add_argument("-n", help="Number of output chunks")
+
+    print('WARNING: This code has not actually been tested so DO DUE DILLIGENCE before using!')
+
+    # parse
+    args = parser.parse_args()
+
+
+import bibtexparser
+
+
+parser = BibTexParser(common_strings=False)
+parser.ignore_nonstandard_types = False
+parser.homogenise_fields = False
+
+
+with open('nsf.bib') as bibtex_file:
+    bib_database = bibtexparser.bparser.BibTexParser(common_strings=True).parse_file(bibtex_file)
+
+

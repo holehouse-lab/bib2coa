@@ -1,0 +1,116 @@
+#!/usr/bin/env python
+"""
+Wrapper script that converts MobiDB-LITE generated .csv files into plane old
+FASTA files.
+
+"""
+
+
+from os import path
+import argparse
+
+version="1.0"
+
+if __name__=="__main__":
+
+    # set things up...
+    parser = argparse.ArgumentParser(description='bib2coa: A simple tool for converting ')
+
+    parser.add_argument("file")
+    parser.add_argument("--stats", action='store_true', help="Display stats on the bibtext file parsed")
+    parser.add_argument("--output", help="Filename for output file", default='coa_initial.tsv')
+    
+    # parse
+    args = parser.parse_args()
+    print('bib2cao version %s'%(version))
+
+    if args.file is None:
+        print('ERROR: Please file a bibtex file as the single argument')
+        exit(1)
+    
+    try:
+        from bibtexparser.bparser import BibTexParser
+        import bibtexparser
+
+    except Exception as e:
+        print('\nERROR: Failed to import bibtextparser - make sure this has been installed using\npip install bibtexparser\n\n')
+        exit(1)
+
+    if not path.exists(args.file):
+        print('\nERROR: Could not find file (filename=%s)' %(args.file))
+        exit(1)
+
+
+
+
+    
+
+    parser = BibTexParser(common_strings=False)
+    parser.ignore_nonstandard_types = False
+    parser.homogenise_fields = False
+    
+    try:
+        with open(args.file) as bibtex_file:
+            bib_database = bibtexparser.bparser.BibTexParser(common_strings=True).parse_file(bibtex_file)
+    except Exception as e:
+        print('\nERROR: Something went wrong while parsing the bibtex file. Error message printed below.\n\n%s\n'%(str(e)))
+
+
+    all_papers = {}
+    all_authors = []
+    dupes=0
+
+    ## part 1
+    # for each paper entry in the bitex file
+    for paper in bib_database.entries:
+
+        # extract a list of authors and the paper title
+        author_list = paper['author'].replace('\n',' ').replace('\t',' ').split(' and ')
+        paper_title = paper['title'].replace('\n', ' ').replace('{','').replace('}','').replace('\t',' ')
+        paper_title = "%s - %s" % ( str(paper['year']), paper_title)
+
+        # if the title is already found
+        if paper_title in all_papers:
+            dupes = dupes+1
+
+            # find any authors missing in that entry and add
+            for author in author_list:
+                if author not in all_papers[paper_title]:
+                    all_papers[paper_title].append(author)
+                    all_authors.append(author)
+        else:
+            all_papers[paper_title] = author_list
+            all_authors.extend(author_list)
+
+    ## PART 2
+    author_count={}
+    
+    for i in all_authors:
+        author_count[i] = 0
+
+    hits = []
+    for p in all_papers:
+        local_authors = all_papers[p]
+
+        for i in local_authors:
+            if author_count[i] == 0:
+                hits.append([i,p])
+            
+        author_count[i] = author_count[i] + 1
+            
+
+    if args.stats is True:
+        print('+----------------------+')
+        print('| Summary statistics   |')
+        print('+----------------------+\n')
+        print("Number of bibtex entries     : %i" %(len(bib_database.entries)))
+        print("Number of unique paper names : %i" %(len(all_papers)))
+        print("Number of unique authors     : %i" %(len(hits)))
+
+    with open(args.output,'w') as fh:
+        for line in hits:
+            fh.write('%s\t%s\n'%(line[0], line[1]))
+              
+    
+    
+
