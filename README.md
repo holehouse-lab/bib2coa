@@ -1,18 +1,31 @@
 bib2coa
 ==============================
-[//]: # (Badges)
-[![GitHub Actions Build Status](https://github.com/REPLACE_WITH_OWNER_ACCOUNT/bib2coa/workflows/CI/badge.svg)](https://github.com/REPLACE_WITH_OWNER_ACCOUNT/bib2coa/actions?query=workflow%3ACI)
-[![codecov](https://codecov.io/gh/REPLACE_WITH_OWNER_ACCOUNT/bib2coa/branch/master/graph/badge.svg)](https://codecov.io/gh/REPLACE_WITH_OWNER_ACCOUNT/bib2coa/branch/master)
 
 
-A command-line tool that converts a single bibtex file to a csv with paper, author that can be used as the foundation for an NSF COA form.
 
-### Copyright
+A command-line tool that converts a single bibtex file to a tsv with paper, author that can be used as the foundation for an NSF COA form.
 
-Copyright (c) 2021, Alex Holehouse
+## Install
+
+To install [current stable version from PyPI](https://pypi.org/project/bib2coa/)
 
 
-#### Acknowledgements
- 
-Project based on the 
-[Computational Molecular Science Python Cookiecutter](https://github.com/molssi/cookiecutter-cms) version 1.5.
+	pip install bib2coa
+
+To install source clone this repository or download the zip file and unzip and run
+
+	pip install .
+	
+From within the source dir tree (where `setup.py` is).
+
+## Usage
+To build a tab-separated file (TSV) from a bibtex file run
+
+	bib2coa <filename>
+	
+This creates an outputfile called `coa_initial.tsv` which has two tab-separated columns. Unique authors (col 1) and the paper they come from with the paper year. 
+
+To see stats on the conversion include `--stats` flag. 
+
+To output a file with a different name add the `--output my_file.tsv` (for example).
+		
