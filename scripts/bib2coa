@@ -9,7 +9,7 @@ FASTA files.
 from os import path
 import argparse
 
-version="1.0"
+version="1.1"
 
 if __name__=="__main__":
 
@@ -18,7 +18,7 @@ if __name__=="__main__":
 
     parser.add_argument("file")
     parser.add_argument("--stats", action='store_true', help="Display stats on the bibtext file parsed")
-    parser.add_argument("--output", help="Filename for output file", default='coa_initial.tsv')
+    parser.add_argument("--output", help="Filename for output file (default = coa_initial.tsv)", default='coa_initial.tsv')
     
     # parse
     args = parser.parse_args()
@@ -86,17 +86,18 @@ if __name__=="__main__":
     author_count={}
     
     for i in all_authors:
-        author_count[i] = 0
+        author_count[i.strip()] = 0
 
     hits = []
     for p in all_papers:
         local_authors = all_papers[p]
 
         for i in local_authors:
-            if author_count[i] == 0:
-                hits.append([i,p])
+            i_strip = i.strip()
+            if author_count[i_strip] == 0:
+                hits.append([i_strip, p])
             
-        author_count[i] = author_count[i] + 1
+            author_count[i] = author_count[i] + 1
             
 
     if args.stats is True:
